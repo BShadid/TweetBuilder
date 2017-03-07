@@ -3,7 +3,7 @@ Data Structures Final Project
 
 Contributors:
 
-Jacob Beiter (@potpourri1024)
+Jacob Beiter (@jcbbeiter)
 Samuel Berning (@baronbird)
 Benjamin Shadid (@BShadid)
 
