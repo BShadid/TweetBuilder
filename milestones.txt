@@ -14,7 +14,9 @@ Quirks with Twitter's API v1.1 endpoint:
 
 
 0. Find a way to curl twitter's API either by using a consumer key or a
-documented workaround. (We may have to use twurl for this)
+documented workaround. (We may have to use twurl for this) 
+
+[Completed by @BShadid, 3/17/17]
 
 1. Retrieve JSON file from Twitter's API endpoint using python.
 
