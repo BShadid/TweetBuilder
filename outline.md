@@ -1,7 +1,7 @@
-##Outline (last changed 3/17/2017 5:30 PM, by bshadid)
+Outline (last changed 3/17/2017 5:30 PM, by bshadid)
 =========
 
-Each part of the program`s functionality should be broken up into its own file.
+Each part of the program's functionality should be broken up into its own file.
 For instance, one script could be in charge of curling the API and extracting
 the tweet fields, another could be a word-count MapReduce script for word
 count, etc. There would then be a driver file for this that would put this all
@@ -14,10 +14,12 @@ written in the anticipated order of use by the driver file:
 
 |      Filename       |   Author   | Done |
 |---------------------|------------|------|
-| twitter_curl.py     |            |      |
+| twitter_curl.py\*    |            |      |
 | wordcount_MR.py     |            |      |
 | word_mapper.py      |            |      |
 | tree_mapper.py      |            |      |
+
+*This file might not be written if we continue to use the tweepy package.
 
 ## Driving files and libraries
 
@@ -25,8 +27,9 @@ written in the anticipated order of use by the driver file:
 |-----------------------|--------------|------|
 | twitterRNN.py         |              |      |
 | graphics.py           | N/A          | [x]  |
+| tweepy                | N/A          | [x]  |
 | recursive_methods.pyc |              |      |
-| math_methods.pyc*     |              |      |
+| math_methods.pyc\*     |              |      |
 
 
 *This file will be written if calculating word correlations and sizes of words
@@ -40,5 +43,5 @@ if twitter application application is too complicated of a process. Each of the
 files maps to one or multiple of the objectives outlines in milestones.txt.
 
 
-NOTE: The graphics library, graphics.py, is already written, so there shouldn`t need
+NOTE: The graphics library, graphics.py, is already written, so there shouldn't need
 to be any changes made to it.
