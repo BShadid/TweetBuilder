@@ -1,4 +1,4 @@
-Outline (last changed 3/17/2017 5:30 PM, by bshadid)
+Outline 
 =========
 
 Each part of the program's functionality should be broken up into its own file.
