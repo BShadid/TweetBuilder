@@ -1,4 +1,4 @@
-Milestones for Twitter Recursive Nerual Network:
+Milestones for Twitter Recursive Neural Network:
 
 Quirks with Twitter's API v1.1 endpoint:
 
