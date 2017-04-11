@@ -17,14 +17,29 @@ def wordCheck(tweet):
 	return list(map(spell, word for word in tweet))
 
 # Takes in a list of words from a tweet, adds them to the 
-def addTweet(M, tweet): #take in mastermatrix, list as arguments
-	if (len(tweet) > 0):
-		M.addPV(tweet[0])
+def addTweet(M, tweet, mode = ""): #take in mastermatrix, list as arguments
+	if (len(mode) == 0):
+		if (len(tweet) > 0):
+			M.addPV(tweet[0])
+	
+			while (len(tweet) > 0):
+				current = tweet.pop(0)
+				M.add_freq(current)
+				M.add_corr(current, tweet)
+	
+	elif (mode == "MARKOV"):
+		if len(tweet) > 0):
+			M.addPV(tweet[0])
+			
+			while (len(tweet) > 0):
+				current = tweet.pop(0)
+				M.add_freq(current)
 
-		while (len(tweet) > 0):
-			current = tweet.pop(0)
-			M.add_freq(current)
-			M.add_corr(current, tweet)
+				try:
+					M.add_markov_corr(current, tweet[0])
+				except IndexError:
+					break
+
 
 
 # -------------- MATRIX-RELATED FUNCTIONS ----------- #
@@ -42,3 +57,23 @@ def purgeTable(M, minimum): # This will be costly
 # Remove one word only from the Matrix
 def removeSingle(M, w1):
 	M.WORD_DEL(w1)
+
+# Pearsonize the matrix after everything is set in place
+def process(M, mode = ""):
+	if (mode == "MARKOV"):
+		if (M.getMark(" ", " ") == -1):
+			M.markovPearsonize()
+			return 0
+	else:
+		if (M.getParson(" ", " ") == -1):		
+			M.pearsonize()
+			return 0
+
+	return 1
+
+# Return a list of top-correlated words for a given word in the matrix
+def getTops(M, word, N_ITEMS, threshold = 0.01, mode = ""):
+	if (mode == "MARKOV"):
+		return M.getTopN(word, N_ITEMS, threshold, "MARKOV")
+	else:
+		return M.getTopN(word, N_ITEMS, threshold)
