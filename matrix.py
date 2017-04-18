@@ -20,10 +20,10 @@ class masterM(object):
 		if word in self.freq:
 			self.freq[word] += 1;
 		else:
-			self.freq.update({word, 1})
+			self.freq.update({word: 1})
 
 
-	def get_wl(self);
+	def get_wl(self):
 		return [ x for x in self.freq ]
 
 
@@ -51,8 +51,8 @@ class masterM(object):
 			if (w1 == w2):
 				continue
 			else:
-				y = sorted(w1, w2)
-				x = (y[0], y[1])
+				x = tuple(sorted([w1, w2]))
+				#x = (y[0], y[1])
 				if x in self.corr:
 					self.corr[x] += 1.0 # We need floats for pearsonization
 				else:
@@ -60,8 +60,7 @@ class masterM(object):
 
 	
 	def add_markov_corr(self, w1, w2):
-		y = sorted(w1, w2)
-		x = (y[0], y[1])
+		x = tuple(sorted([w1, w2]))
 
 		if x in self.corr_markov:
 			self.corr_markov[x] += 1.0
@@ -69,7 +68,7 @@ class masterM(object):
 			self.corr_markov.update({x:1.0})
 		
 
-	def pearsonize(self); # Creates the pearson correlation matrix for words as a virtual 2D dict()
+	def pearsonize(self): # Creates the pearson correlation matrix for words as a virtual 2D dict()
 						  # VERY HEAVY COMPUTATION, should only be called once in a masterM's lifetime.
 		#self.purgeHapax()
 		for x in self.corr:

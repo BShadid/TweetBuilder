@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/afs/nd.edu/user14/csesoft/cse20312/bin/python3
 
 # This is the main library for interacting with the masterM class,
 # which holds correlation and frequency information
@@ -14,7 +14,7 @@ def filterCommons(tweet, commons):
 
 # Uses spellcheck to replace words, VERY costly build time of Matrix using this function
 def wordCheck(tweet):
-	return list(map(spell, word for word in tweet))
+	return list(map(spell, [word for word in tweet]))
 
 # Takes in a list of words from a tweet, adds them to the 
 def addTweet(M, tweet, mode = ""): #take in mastermatrix, list as arguments
@@ -28,7 +28,7 @@ def addTweet(M, tweet, mode = ""): #take in mastermatrix, list as arguments
 				M.add_corr(current, tweet)
 	
 	elif (mode == "MARKOV"):
-		if len(tweet) > 0):
+		if (len(tweet) > 0):
 			M.addPV(tweet[0])
 			
 			while (len(tweet) > 0):
@@ -65,7 +65,7 @@ def process(M, mode = ""):
 			M.markovPearsonize()
 			return 0
 	else:
-		if (M.getParson(" ", " ") == -1):		
+		if (M.getPearson(" ", " ") == -1):		
 			M.pearsonize()
 			return 0
 
