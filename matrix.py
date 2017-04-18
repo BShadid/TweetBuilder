@@ -171,7 +171,11 @@ class masterM(object):
 
 		del self.freq[w1]
 
-			
+	def TOP_FREQS(self):
+		temp = [ x for x in self.freq ]
+		temp.sort(key=itemgetter(1))
+		return temp
+
 	def purgeHapax(self): #Remove words that only occur once, might be used if pearsonizing computation becomes too heavy
 		pass
 
