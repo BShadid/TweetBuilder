@@ -1,7 +1,6 @@
 #!/usr/bin/env python2
 
 import tweepy
-import sys
 import re
 
 from keys import consumerKey, consumerSecret, accessKey, accessSecret
@@ -20,19 +19,3 @@ def getTweets(word,numTweets=20):
 	tw = re.sub('[^a-zA-Z0-9\s]', '', tw)
 	tw = re.sub('\s+', ' ', tw).strip().lower()
 	yield tw.split(' ')
-
-
-word = 'word'
-count = 20
-if len(sys.argv) > 1:
-    word = sys.argv[1]
-if len(sys.argv) > 2:
-    count = sys.argv[2]
-num = 1
-tweets = getTweets(word,count)
-for tweet in tweets:
-    print num,
-    print ': ' + ' '.join(tweet)
-    #print tweet
-    print '---'
-    num = num + 1
