@@ -4,7 +4,7 @@
 # which holds correlation and frequency information
 
 from matrix import masterM
-from autocorrect import spell
+#from autocorrect import spell
 
 # ---------- TWEET PROCESSING FUNCTIONS ------------ #
 
@@ -13,8 +13,8 @@ def filterCommons(tweet, commons):
 	return [ word for word in tweet if set(word) & set(commons) ]
 
 # Uses spellcheck to replace words, VERY costly build time of Matrix using this function
-def wordCheck(tweet):
-	return list(map(spell, [word for word in tweet]))
+#def wordCheck(tweet):
+#	return list(map(spell, [word for word in tweet]))
 
 # Takes in a list of words from a tweet, adds them to the 
 def addTweet(M, tweet, mode = ""): #take in mastermatrix, list as arguments
@@ -72,8 +72,12 @@ def process(M, mode = ""):
 	return 1
 
 # Return a list of top-correlated words for a given word in the matrix
-def getTops(M, word, N_ITEMS, threshold = 0.01, mode = ""):
+def getTops(M, word, N_ITEMS=5, threshold = 0.01, mode = ""):
 	if (mode == "MARKOV"):
 		return M.getTopN(word, N_ITEMS, threshold, "MARKOV")
 	else:
 		return M.getTopN(word, N_ITEMS, threshold)
+
+# Return a list of the most common words in the matrix
+def getMostCommon(M):
+	return M.TOP_FREQS
