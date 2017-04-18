@@ -40,8 +40,6 @@ cloud = generate_word_cloud(words)
 
 bg = pygame.Surface(win.get_size())
 bg = bg.convert()
-bg.fill((255,255,255))
-
 
 # main interaction loop :: updates screen and checks for events
 while(1):
