@@ -1,5 +1,5 @@
-import string
-import numpy
+#import string
+#import numpy
 from operator import itemgetter
 
 class masterM(object):
@@ -39,9 +39,10 @@ class masterM(object):
 	
 
 	def getPV(self):
-		return self.primusVerbus		# returns with frequencies
+		temp = [ (x, self.primusVerbus[x]) for x in self.primusVerbus ]	# returns with frequencies
+		temp.sort(key=itemgetter(1), reverse=True)
+		return temp
 
-	
 
 	def add_corr(self, w1, body):
 		if (len(body) < 1):
@@ -115,8 +116,7 @@ class masterM(object):
 				if (w1 == w2):
 					continue
 	
-				y = sorted(w1, w2)
-				x = (y[0], y[1])
+				x = tuple(sorted([w1, w2]))
 	
 				if x not in self.corr:
 					continue
@@ -132,8 +132,7 @@ class masterM(object):
 		else:
 			for w2 in self.freq:
 				
-				y = sorted(w1, w2)
-				x = (y[0], y[1])
+				x = tuple(sorted([w1, w2]))
 
 				if x not in self.corr_markov:
 					continue
@@ -145,7 +144,7 @@ class masterM(object):
 				elif (self.markovMat[x] > topN[n-1][1]):
 					topN.pop()
 					topN.append((x, self.markovMat[x]))
-					topN.sort(key=itemgetter(1))
+					topN.sort(key=itemgetter(1),reverse=True)
 
 		return topN
 
@@ -173,7 +172,7 @@ class masterM(object):
 
 	def TOP_FREQS(self):
 		temp = [ x for x in self.freq ]
-		temp.sort(key=itemgetter(1))
+		temp.sort(key=itemgetter(1), reverse=True)
 		return temp
 
 	def purgeHapax(self): #Remove words that only occur once, might be used if pearsonizing computation becomes too heavy
