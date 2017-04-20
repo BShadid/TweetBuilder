@@ -5,10 +5,13 @@
 
 import os, sys
 import math, random
+import tweepy
 import pygame
+from pygame.locals import *
 from matrixLib import *
 import matrix
 from getTweets import getTweets
+from keys import *
 
 # helper functions
 def generate_word_cloud(pairs):
@@ -16,7 +19,7 @@ def generate_word_cloud(pairs):
 	posList = []
 	collide = True
 	for pair in pairs[0:19]:
-		font = pygame.font.Font(None,math.floor(12 + pair[1]))
+		font = pygame.font.Font(None,math.floor(20 + 3*pair[1]))
 		text = font.render(pair[0],1,(0,0,0))
 		if random.randrange(0,10) > 7:
 			text = pygame.transform.rotate(text,90)
@@ -35,14 +38,21 @@ def generate_word_cloud(pairs):
 # pygame initial settings
 
 master = masterM();
-for i in getTweets("test", 1000):
+for i in getTweets("sauce", 1000):
 	addTweet(master, i, "MARKOV")
 
+
+process(master)
+words = master.getPV()
+
 pygame.init()
-win = pygame.display.set_mode((640,480))
+flags = DOUBLEBUF 
+win = pygame.display.set_mode((640,480), flags)
 pygame.display.set_caption("TwitterRNN")
+win.set_alpha(None)
 clock = pygame.time.Clock()
 
+TWEET = ""
 
 '''
 with open("OUTPUT.txt", "r+") as f:
@@ -51,8 +61,7 @@ with open("OUTPUT.txt", "r+") as f:
 		addTweet(master, line, "MARKOV")
 '''
 
-process(master)
-words = master.getPV()
+
 
 #words = [('Samuel',65),('Jacob',54),('Benjamin',37),('Twitter',35),('project',32),('pal',21),('buddy',13)]
 cloud = generate_word_cloud(words)
@@ -67,10 +76,16 @@ while(1):
 		if event.type == pygame.QUIT:
 			exit()
 		elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+			auth = tweepy.OAuthHandler(consumerKey, consumerSecret)
+			auth.set_access_token(accessKey, accessSecret)
+			api = tweepy.API(auth)
+			if (len(TWEET) <= 140):
+				api.update_status(TWEET)
 			exit()
 		elif event.type == pygame.MOUSEBUTTONDOWN:
 			for word in cloud:
 				if word[1].collidepoint(pygame.mouse.get_pos()):
+					TWEET += word[2] + " "
 					print(word[2])
   
 	bg.fill((255,255,255))	  
