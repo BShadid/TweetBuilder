@@ -61,7 +61,7 @@ class masterM(object):
 
 	
 	def add_markov_corr(self, w1, w2):
-		x = tuple(sorted([w1, w2]))
+		x = tuple([w1, w2])
 
 		if x in self.corr_markov:
 			self.corr_markov[x] += 1.0
@@ -132,20 +132,19 @@ class masterM(object):
 		else:
 			for w2 in self.freq:
 				
-				x = tuple(sorted([w1, w2]))
+				x = tuple([w1, w2])
 
 				if x not in self.corr_markov:
 					continue
 
 				if (len(topN) < n):
-					if (self.markovMat[x] >= treshold):
-						topN.append((x, self.markovMat[x]))
+					if (self.markovMat[x] >= threshold):
+						topN.append((w2, self.markovMat[x]))
 
 				elif (self.markovMat[x] > topN[n-1][1]):
 					topN.pop()
-					topN.append((x, self.markovMat[x]))
+					topN.append((w2, self.markovMat[x]))
 					topN.sort(key=itemgetter(1),reverse=True)
-
 		return topN
 
 
@@ -159,8 +158,7 @@ class masterM(object):
 			if (w1 == w2):
 				continue
 
-			y = sorted(w1, w2)
-			x = (y[0], y[1])
+			x = tuple(sorted([w1, w2]))
 
 			if x not in self.corr:
 				continue
@@ -170,10 +168,58 @@ class masterM(object):
 
 		del self.freq[w1]
 
+
 	def TOP_FREQS(self):
 		temp = [ x for x in self.freq ]
 		temp.sort(key=itemgetter(1), reverse=True)
 		return temp
+
+
+	# Since the student machine's OOM killer hates us, we'll have to back up our progress
+	def DUMP_VALUES(self, mode=""):
+
+		if not (self.pearsonized or self.m_pearsed):
+			return -1
+
+		with open(".m_freqs.txt", 'w') as f:
+			for i in self.freq:
+				f.write(i+","+str(self.freq[i])+'\n')
+
+		if (mode=="MARKOV"):
+			with open(".m_corrM.txt", 'w') as f2:
+				for i in self.corr_markov:
+					f2.write(i[0]+','+i[1]+','+str(self.corr_markov[i])+'\n')
+
+		else:
+			with open(".m_corr.txt", 'w') as f3:
+				for i in self.corr:
+					f3.write(i[0]+','+i[1]+','+str(self.corr[i])+'\n')
+
+		return 0
+			
+	# This should be called at the start of the program for starter data
+	def LOAD_VALUES(self, mode=""):
+		
+		try:
+			with open(".m_freqs.txt", 'r') as f:
+				lines = [ line.rstrip('\n').split(',') for line in f ]
+				for x in lines:
+					self.freq.update({x[0]:int(x[1])})
+
+			if (mode=="MARKOV"):
+				with open(".m_corrM.txt", 'r') as f2:
+					lines = [ line.rstrip('\n').split(',') for line in f2 ]
+					for x in lines:
+						self.corr_markov.update({(x[0], x[1]):float(x[2])})
+
+			else:
+				with open(".m_corr.txt", 'r') as f3:
+					lines = [ line.rstrip('\n').split(',') for line in f3 ]
+					for x in lines:
+						self.corr.update({(x[0], x[1]):float(x[2])})
+
+		except:
+			return -1
 
 	def purgeHapax(self): #Remove words that only occur once, might be used if pearsonizing computation becomes too heavy
 		pass
