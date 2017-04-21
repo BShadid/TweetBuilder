@@ -14,31 +14,30 @@ from keys import *
 import time
 
 
+search = sys.stdin.read()
+#print(search)
 master = masterM()
 master.LOAD_VALUES("MARKOV")
-for i in getTweets('test', 1000):
+for i in getTweets(search, 500):
 	addTweet(master, i, "MARKOV")
 
 process(master, "MARKOV")
 words = master.getPV()
+#print(words)
 try:
-	next_search = words[random.randrange(len(words)-1)][0]
+	next_word = random.choice(words)[0]
 except:
-	next_search = "the"
+	next_word = search
 
-TWEET = next_search + " "
-
-
-next_word = words[0][0]
+TWEET = next_word + " "
 
 while (len(TWEET) <= 140):
 
 	try:
-		words = getTops(master, next_word, 5, 0.05, "MARKOV")
-		next_word = words[random.randrange(len(words)-1)][0]
+		words = getTops(master, next_word, 3, 0.005, "MARKOV")
+		next_word = random.choice(words)[0]
+		#print(next_word)
 	except IndexError:
-		break
-	except ValueError:
 		break
 
 	if len(TWEET) + len(next_word) + 1 > 140:
@@ -46,10 +45,11 @@ while (len(TWEET) <= 140):
 	else:
 		TWEET += next_word + " "
 
-if (len(TWEET.split()) > 2):
+if (len(TWEET.split()) > 1):
 	auth = tweepy.OAuthHandler(consumerKey, consumerSecret)
 	auth.set_access_token(accessKey, accessSecret)
 	api = tweepy.API(auth)
 	api.update_status(TWEET)
+	#print(TWEET)
 
 master.DUMP_VALUES("MARKOV")
