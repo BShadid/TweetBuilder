@@ -15,8 +15,8 @@ def getTweets(word,numTweets=20):
 		tw = str(''.join([char for char in tweet.text if ord(char) < 128]))
 		tw = re.sub('https://[^\s]*', '', tw)
 		tw = re.sub('RT @[^\s]*', '', tw)
-		tw = re.sub('@[^\s]*', '', tw)
-		tw = re.sub('[^a-zA-Z0-9\s]', '', tw)
+		#tw = re.sub('@[^\s]*', '', tw)
+		#tw = re.sub('[\.]', '', tw)
 		tw = re.sub('\s+', ' ', tw).strip().lower()
 		yield tw.split(' ')
 

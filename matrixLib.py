@@ -4,7 +4,6 @@
 # which holds correlation and frequency information
 
 from matrix import masterM
-#from autocorrect import spell
 
 # ---------- TWEET PROCESSING FUNCTIONS ------------ #
 
@@ -80,4 +79,4 @@ def getTops(M, word, N_ITEMS=5, threshold = 0.01, mode = ""):
 
 # Return a list of the most common words in the matrix
 def getMostCommon(M):
-	return M.TOP_FREQS
+	return M.TOP_FREQS()

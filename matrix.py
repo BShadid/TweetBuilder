@@ -122,7 +122,7 @@ class masterM(object):
 					continue
 	
 				if (len(topN) < n):
-					if (self.pearsonMat[x] >= threshold):
+					if (self.pearsonMat[x] > threshold):
 						topN.append((x, self.pearsonMat[x]))
 	
 				elif (self.pearsonMat[x] > topN[n-1][1]): # This is the slow part, insertion sort is O(n^2)
@@ -138,7 +138,7 @@ class masterM(object):
 					continue
 
 				if (len(topN) < n):
-					if (self.markovMat[x] >= threshold):
+					if (self.markovMat[x] > threshold):
 						topN.append((w2, self.markovMat[x]))
 
 				elif (self.markovMat[x] > topN[n-1][1]):
@@ -183,17 +183,17 @@ class masterM(object):
 
 		with open(".m_freqs.txt", 'w') as f:
 			for i in self.freq:
-				f.write(i+","+str(self.freq[i])+'\n')
+				f.write(i+"\t"+str(self.freq[i])+'\n')
 
 		if (mode=="MARKOV"):
 			with open(".m_corrM.txt", 'w') as f2:
 				for i in self.corr_markov:
-					f2.write(i[0]+','+i[1]+','+str(self.corr_markov[i])+'\n')
+					f2.write(i[0]+'\t'+i[1]+'\t'+str(self.corr_markov[i])+'\n')
 
 		else:
 			with open(".m_corr.txt", 'w') as f3:
 				for i in self.corr:
-					f3.write(i[0]+','+i[1]+','+str(self.corr[i])+'\n')
+					f3.write(i[0]+'\t'+i[1]+'\t'+str(self.corr[i])+'\n')
 
 		return 0
 			
@@ -202,19 +202,21 @@ class masterM(object):
 		
 		try:
 			with open(".m_freqs.txt", 'r') as f:
-				lines = [ line.rstrip('\n').split(',') for line in f ]
+				lines = [ line.rstrip('\n').split('\t') for line in f ]
 				for x in lines:
-					self.freq.update({x[0]:int(x[1])})
+					if not x[0].startswith('@'):
+						self.freq.update({x[0]:int(x[1])})
 
 			if (mode=="MARKOV"):
 				with open(".m_corrM.txt", 'r') as f2:
-					lines = [ line.rstrip('\n').split(',') for line in f2 ]
+					lines = [ line.rstrip('\n').split('\t') for line in f2 ]
 					for x in lines:
-						self.corr_markov.update({(x[0], x[1]):float(x[2])})
+						if not (x[0].startswith('@') or x[1].startswith('@')):
+							self.corr_markov.update({(x[0], x[1]):float(x[2])})
 
 			else:
 				with open(".m_corr.txt", 'r') as f3:
-					lines = [ line.rstrip('\n').split(',') for line in f3 ]
+					lines = [ line.rstrip('\n').split('\t') for line in f3 ]
 					for x in lines:
 						self.corr.update({(x[0], x[1]):float(x[2])})
 

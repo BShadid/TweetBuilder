@@ -7,6 +7,8 @@ import os, sys
 import random
 import tweepy
 import time
+import re
+import string
 from matrixLib import *
 import matrix
 from getTweets import getTweets
@@ -15,10 +17,16 @@ import time
 
 
 search = sys.stdin.read()
+if search.startswith('@'):
+	search = search[1:len(search)-1]
+
+if search.endswith('.'):
+	search = re.sub('["\.]', '', search)
+
 #print(search)
 master = masterM()
 master.LOAD_VALUES("MARKOV")
-for i in getTweets(search, 500):
+for i in getTweets(search, 600):
 	addTweet(master, i, "MARKOV")
 
 process(master, "MARKOV")
@@ -34,7 +42,7 @@ TWEET = next_word + " "
 while (len(TWEET) <= 140):
 
 	try:
-		words = getTops(master, next_word, 3, 0.005, "MARKOV")
+		words = getTops(master, next_word, 2, 0.0, "MARKOV")
 		next_word = random.choice(words)[0]
 		#print(next_word)
 	except IndexError:
@@ -51,5 +59,8 @@ if (len(TWEET.split()) > 1):
 	api = tweepy.API(auth)
 	api.update_status(TWEET)
 	#print(TWEET)
+
+with open("history.log", "a") as f:
+	f.write(search.rstrip('\n') + ": " + TWEET + '\n')
 
 master.DUMP_VALUES("MARKOV")

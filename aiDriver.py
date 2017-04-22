@@ -4,9 +4,17 @@
 #	       :: main driver for project, integrates graphics
 
 import os, sys
+import datetime
 import time
 import subprocess
+import signal
+
+def handler(signal, frame):
+	x = 2
+
+signal.signal(signal.SIGHUP, handler)
+signal.signal(signal.SIGINT, handler)
 
 while (True):
-	subprocess.call("./interface2.py", shell=True)
-	time.sleep(600)
+	subprocess.call("cat .m_freqs.txt | shuf -n 1 | cut -f 1 | ./interface2.py", shell=True)
+	time.sleep(1200)
