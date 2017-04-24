@@ -18,7 +18,7 @@ def generate_word_cloud(pairs):
 	cloud = []
 	posList = []
 	collide = True
-	for pair in pairs[0:19]:
+	for pair in pairs[0:(min(19,len(pairs)))]:
 		font = pygame.font.Font(None,math.floor(20 + 3*pair[1]))
 		text = font.render(pair[0],1,(0,0,0))
 		if random.randrange(0,10) > 7:
@@ -37,12 +37,17 @@ def generate_word_cloud(pairs):
 
 # pygame initial settings
 
+try:
+	term = sys.argv[1]
+except:
+	term = "data"
+
 master = masterM();
-for i in getTweets("sauce", 1000):
+for i in getTweets(term, 1000):
 	addTweet(master, i, "MARKOV")
 
 
-process(master)
+process(master, "MARKOV")
 words = master.getPV()
 
 pygame.init()
@@ -69,6 +74,18 @@ cloud = generate_word_cloud(words)
 bg = pygame.Surface(win.get_size())
 bg = bg.convert()
 
+
+def pushtweet(tweet):
+	try:
+		auth = tweepy.OAuthHandler(consumerKey, consumerSecret)
+		auth.set_access_token(accessKey, accessSecret)
+		api = tweepy.API(auth)
+		api.update_status(tweet)
+	except TweepError:
+		print("TweepError: coud not tweet at this time")
+
+	exit()
+
 # main interaction loop :: updates screen and checks for events
 while(1):
 	clock.tick(60)
@@ -76,21 +93,19 @@ while(1):
 		if event.type == pygame.QUIT:
 			exit()
 		elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-			auth = tweepy.OAuthHandler(consumerKey, consumerSecret)
-			auth.set_access_token(accessKey, accessSecret)
-			api = tweepy.API(auth)
-			if (len(TWEET) <= 140):
-				api.update_status(TWEET)
-			exit()
+			pushtweet(TWEET)
 		elif event.type == pygame.MOUSEBUTTONDOWN:
 			for word in cloud:
 				if word[1].collidepoint(pygame.mouse.get_pos()):
+					if len(TWEET) + len(word[2] + " ") > 140:
+						pushtweet(TWEET)
 					TWEET += word[2] + " "
 					print(word[2])
-  
+					cloud = generate_word_cloud(getTops(master, word[2], 5, 0.0, "MARKOV"))
+	 
 	bg.fill((255,255,255))	  
 	for word in cloud:
-		bg.blit(word[0],word[1])
+		bg.blit(word[0],word[1])	
 
 	win.blit(bg,(0,0))
 	pygame.display.flip()
