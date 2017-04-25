@@ -43,6 +43,7 @@ except:
 	term = "data"
 
 master = masterM();
+master.LOAD_VALUES("MARKOV")
 for i in getTweets(term, 1000):
 	addTweet(master, i, "MARKOV")
 
@@ -58,15 +59,6 @@ win.set_alpha(None)
 clock = pygame.time.Clock()
 
 TWEET = ""
-
-'''
-with open("OUTPUT.txt", "r+") as f:
-	for line in f:
-		line = line.strip().split()
-		addTweet(master, line, "MARKOV")
-'''
-
-
 
 #words = [('Samuel',65),('Jacob',54),('Benjamin',37),('Twitter',35),('project',32),('pal',21),('buddy',13)]
 cloud = generate_word_cloud(words)
@@ -84,6 +76,7 @@ def pushtweet(tweet):
 	except TweepError:
 		print("TweepError: coud not tweet at this time")
 
+	master.DUMP_VALUES("MARKOV")
 	exit()
 
 # main interaction loop :: updates screen and checks for events
