@@ -20,6 +20,12 @@ This script fetches tweets about a user-specified topic, constructs a network of
 
 Running aiDriver.py will run the interface script every 10 minutes and generate/send tweets automatically. Both human and automatic modes tweet as [@2Nip\_DataMiner](https://twitter.com/2Nip_DataMiner)
 
+This program requires the keys.py file to interact with Twitter's API. This is not in the repository. For access to this file, contact one of the contributors.
+
+## Updates
+
+MAY 1, 2017: aiDriver.py and interface2.py have both been removed from the repository temporarily. They may be added back later.
+
 ## Disclaimer
 
 This project will be using the tweepy python package to interact with the
