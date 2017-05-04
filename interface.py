@@ -118,7 +118,7 @@ def pushtweet(tweet):
 try:
 	term = sys.argv[1]
 except:
-	term = "data"
+	term = input("What would you like to tweet about? ")
 
 # loads the correlation matrix and adds info from the new tweets
 master = masterM();
