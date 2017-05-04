@@ -122,7 +122,7 @@ class masterM(object):
 		if (self.pearsonized == False):
 			return -1
 		else:
-			x = tuple(sorted([w1, w2])
+			x = tuple(sorted([w1, w2]))
 			if x in self.pearsonMat:
 				return self.pearsonMat[x]
 			else:
