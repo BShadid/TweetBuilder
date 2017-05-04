@@ -18,6 +18,10 @@ from keys import *
 ### graphics
 
 def generate_word_cloud(pairs):
+	# early exit if no words
+	if len(pairs) == 0:
+		return []
+		
 	# two separate lists, one for tracking the source, destination, and text of a word
 	# generated for graphics reasons
 	cloud = []
@@ -25,10 +29,20 @@ def generate_word_cloud(pairs):
 	# position of each word
 	posList = []
 	
+	# calculate scaling for word cloud size
+	count = 0
+	sum = 0
+	for pair in pairs[0:(min(19,len(pairs)))]:
+		count = count + 1
+		sum = sum + pair[1]
+	avg = sum/count
+	factor = 3/avg
+
 	# handles up to 20 words
 	for pair in pairs[0:(min(19,len(pairs)))]:
-		# initialize the font. font size is dependent on the frequency
-		font = pygame.font.Font(None,math.floor(20 + 3*pair[1]))
+		# initialize the font. font size is dependent on the frequency, scaled to frequencies range
+		font = pygame.font.Font(None,math.floor(20 + 3*factor*pair[1]))
+
 		# render the word
 		text = font.render(pair[0],1,(0,0,0))
 	
@@ -61,13 +75,13 @@ def tweet_to_text_object(tweet):
 	font = pygame.font.Font(None,20)
 
 	# the general rule is if the tweet is less than 90 characters it only needs 1 line
-	if len(tweet) < 90:
+	if len(tweet) < 88:
 		text = font.render(tweet,1,(0,0,0))
 		pos = text.get_rect(x=4,y=440)
 		text_objs.append((text,pos))
 	else:
 		# otherwise we make two text objects
-		i = 89
+		i = 87
 		while tweet[i] != " ":
 			i = i-1
 		text = font.render(tweet[:i],1,(0,0,0))
@@ -129,14 +143,26 @@ clock = pygame.time.Clock()
 
 # font for tweet button
 font = pygame.font.Font(None,20)
-button_src = font.render("Tweet",1,(255,255,255))
-button_dst = button_src.get_rect(x = 585,y = 450)
+tweet_button_src = font.render("Tweet",1,(255,255,255))
+tweet_button_dst = tweet_button_src.get_rect(x = 580,y = 452)
+
+# undo button text
+undo_button_src = font.render("Undo",1,(255,255,255))
+undo_button_dst = undo_button_src.get_rect(x = 585,y = 412)
+
+# error text
+errFont = pygame.font.Font(None,25)
+error_text_src = errFont.render("Error: Exceeds 140 character limit",1,(255,0,0))
+error_text_dst = error_text_src.get_rect(x = 180,y = 420)
+
+# error counter
+errorCounter = 0
 
 # tweet string
-TWEET = ""
+TWEET = [] 
 
 # make tweet for bottom of screen
-tweet_objs = tweet_to_text_object(TWEET)
+tweet_objs = tweet_to_text_object(' '.join(TWEET))
 
 # make word cloud
 cloud = generate_word_cloud(words)
@@ -161,19 +187,31 @@ while(1):
 				# if you click on a word in the cloud
 				if word[1].collidepoint(pygame.mouse.get_pos()):
 					# check to make sure the tweet isn't too long
-					if len(TWEET) + len(word[2] + " ") > 140:
-						print("exceeded character limit")
+					if len(' '.join(TWEET)) + len(word[2] + " ") > 140:
+						errorCounter = 60 # start error counter
 					else:
 						# add word to tweet
-						TWEET += word[2] + " "
+						TWEET.append(word[2])
 						# create new word cloud with top correlated words
 						cloud = generate_word_cloud(getTops(master, word[2], 5, 0.0, "MARKOV"))
 						# update tweet at bottom of screen
-						tweet_objs = tweet_to_text_object(TWEET)
+						tweet_objs = tweet_to_text_object(' '.join(TWEET))
 			# if you click on the tweet button
 			if len(TWEET) > 0 and tweet_button.collidepoint(pygame.mouse.get_pos()):
 				# tweet our tweet
-				pushtweet(TWEET)
+				pushtweet(' '.join(TWEET))
+			# if you click on the undo button
+			if len(TWEET) > 0 and undo_button.collidepoint(pygame.mouse.get_pos()):
+				# pop the most recently added word off the tweet
+				TWEET.pop()
+				# create new word cloud with last word if it has non-zero length
+				if len(TWEET) > 0:
+					cloud = generate_word_cloud(getTops(master, TWEET[-1], 5, 0.0, "MARKOV"))
+				else:
+					cloud = generate_word_cloud(words)
+					
+				# update tweet at bottom of screen
+				tweet_objs = tweet_to_text_object(' '.join(TWEET))
 	 
 	# update graphics
 	bg.fill((255,255,255))	  
@@ -188,7 +226,22 @@ while(1):
 	
 	# tweet button
 	tweet_button = pygame.draw.rect(bg,(29,161,242),(565,440,70,35))
-	bg.blit(button_src,button_dst)
+	bg.blit(tweet_button_src,tweet_button_dst)
+
+	# undo button
+	undo_button = pygame.draw.rect(bg,(30,30,30),(565,400,70,35))
+	bg.blit(undo_button_src,undo_button_dst)
+
+	# character count
+	char_count_src = font.render("Characters: " + str(len(' '.join(TWEET))),1,(0,0,0))
+	char_count_dst = char_count_src.get_rect(x = 10,y = 10)
+	bg.blit(char_count_src,char_count_dst)
+
+	# error text
+	if errorCounter > 0:
+		bg.blit(error_text_src,error_text_dst)
+		errorCounter = errorCounter - 1
+	
 
 	# blit surface to window
 	win.blit(bg,(0,0))
